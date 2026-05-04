@@ -14,6 +14,18 @@ app = Flask(__name__)
 def index():
     return "Bot is alive and running!"
 
+# NAYA FEATURE: /start command ka handler
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    welcome_text = (
+        "👋 **Welcome!**\n\n"
+        "Bot is active and running perfectly.\n"
+        "👉 Use `/like {region} {uid}` to use the like feature.\n"
+        "Example: `/like ind 5513136279`"
+    )
+    bot.reply_to(message, welcome_text, parse_mode='Markdown')
+
+# AAPKA ORIGINAL LIKE HANDLER (No modifications)
 @bot.message_handler(commands=['like'])
 def handle_like(message):
     # Split the command (e.g., /like ind 5513136279)
