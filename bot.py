@@ -1,9 +1,18 @@
 import telebot
 import requests
+from flask import Flask
+import threading
+import os
 
 # Your Configuration
-API_TOKEN = '8209888415:AAFtIobDQ1V8p6VY8KfneH2XPWY4iJTpMic'
+API_TOKEN = '8595456604:AAGlEtvAhPivise3M-nXB7xguqHicQdxAP4'
 bot = telebot.TeleBot(API_TOKEN)
+app = Flask(__name__)
+
+# Render ke liye dummy route
+@app.route('/')
+def index():
+    return "Bot is alive and running!"
 
 @bot.message_handler(commands=['like'])
 def handle_like(message):
@@ -55,6 +64,14 @@ def handle_like(message):
         bot.edit_message_text(f"❌ **Error Connection to API**\n`{str(e)}`", 
                               chat_id=message.chat.id, message_id=sent_msg.message_id, parse_mode='Markdown')
 
-if __name__ == "__main__":
+def run_bot():
     print("Bot is now online...")
     bot.infinity_polling()
+
+if __name__ == "__main__":
+    # Bot ko ek alag thread me run karein taaki web server block na ho
+    threading.Thread(target=run_bot).start()
+    
+    # Main process me Flask web server run karein jo Render ko chahiye
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
